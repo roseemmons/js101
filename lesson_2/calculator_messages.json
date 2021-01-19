@@ -1,0 +1,14 @@
+{
+  "en": {
+    "welcome": "Welcome to Calculator!",
+    "goodbye": "Thank you for using Calculator. Good-bye!",
+    "number1": "What's the first number?",
+    "number2": "What's the second number?",
+    "opToPerform": "What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide",
+    "result": "The result is:",
+    "runProgram": "Would you like to perform another calculation?\nType y or n",
+    "numberError": "Hmm... that doesn't look like a valid number.",
+    "operationError": "Must choose 1, 2, 3 or 4",
+    "runProgramError": "Must choose y or n"
+  }
+}
