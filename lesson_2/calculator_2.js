@@ -1,10 +1,10 @@
 const readline = require('readline-sync');
-const USER_MSG = require('./calculator_messages.json')
+const USER_MSG = require('./calculator_messages.json');
 const DEFAULT_LANG = 'en';
-let runProgram = 'n';
+let runProgram = 'y';
 
 
-function getUserMsg(msg, lang=DEFAULT_LANG) {
+function getUserMsg(msg, lang = DEFAULT_LANG) {
   return USER_MSG[lang][msg];
 }
 
@@ -16,9 +16,9 @@ function invalidNumber(number) {
   return number.trimStart() === '' || Number.isNaN(Number(number));
 }
 
+prompt( getUserMsg('welcome') );
 
-
-function calculator() {
+while (runProgram === 'y') {
   prompt( getUserMsg('number1') );
   let number1 = readline.question();
   // Test for invalid entry
@@ -26,7 +26,7 @@ function calculator() {
     prompt( getUserMsg('numberError') );
     number1 = readline.question();
   }
-  
+
 
   prompt( getUserMsg('number2') );
   let number2 = readline.question();
@@ -35,7 +35,7 @@ function calculator() {
     prompt( getUserMsg('numberError') );
     number2 = readline.question();
   }
-  
+
 
   prompt( getUserMsg('opToPerform') );
   let operation = readline.question();
@@ -44,7 +44,7 @@ function calculator() {
     prompt( getUserMsg('operationError') );
     operation = readline.question();
   }
-  
+
 
   let output = null;
   switch (operation) {
@@ -68,16 +68,10 @@ function calculator() {
   prompt( getUserMsg('runProgram') );
   runProgram = readline.question().toLowerCase();
   // Test for invalid entry
-  while (!['y', 'n'].includes(runProgram)) {
+  while (runProgram[0] !== 'n' && runProgram[0] !== 'y') {
     prompt( getUserMsg('runProgramError') );
     runProgram = readline.question().toLowerCase();
   }
 }
-
-prompt( getUserMsg('welcome') );
-
-do {
-  calculator();    
-} while (runProgram === 'y');
 
 prompt( getUserMsg('goodbye') );
