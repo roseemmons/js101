@@ -1,0 +1,17 @@
+{
+  "en": {
+    "welcome": "\nWelcome to Rock, Paper, Scissors, Lizard, Spock!",
+    "gameRoundNumber": "ROUND",
+    "selectionInstructions": "Please make a selection. Type a number:\n1) Rock 2) Paper 3) Scissors 4) Lizard 5) Spock",
+    "selectionError": "That's not a valid selection.\nPlease type either 1, 2, 3, 4 or 5.",
+    "playerSelectionMessage": "You selected",
+    "computerSelectionMessage": "The computer selected",
+    "scoreMessageHeader": "== Best of 5 score ==",
+    "playerName": "You",
+    "competitorName": "Computer",
+    "playerWinsMessage": "You won the game.\n",
+    "computerWinsMessage": "The computer won the game.\n",
+    "tiedGameMessage": "It's a tie.\n",
+    "goodbye": "Thank you for playing. Live long, and prosper!"
+  }
+}

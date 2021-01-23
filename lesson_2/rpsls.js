@@ -1,5 +1,9 @@
 // VARIABLES
 const readline = require('readline-sync');
+
+const DEFAULT_LANG = 'en';
+const GAME_TEXT = require('./rpsls_text.json');
+
 const VALID_CHOICES = ["rock", "paper", "scissors", "lizard", "spock"];
 const WINNING_COMBINATIONS = {
   rock:     ["lizard", "scissors"],
@@ -8,28 +12,36 @@ const WINNING_COMBINATIONS = {
   lizard:   ["paper", "spock"],
   spock:    ["rock", "scissors"]
 };
+
 let playerScore = 0;
 let computerScore = 0;
+let numberOfRounds = 1;
 
 
 // FUNCTIONS
+function getGameText(textToRetrieve, lang = DEFAULT_LANG) {
+  return GAME_TEXT[lang][textToRetrieve];
+}
+
 function displayGameMessage(msg) {
-  console.log(`=> ${msg}`);
+  console.log(`${msg}`);
 }
 
 function displayGameWinner(gameWinner) {
   let result = null;
-  let scoreMessage = `== Best of 5 score ==\nYou: ${playerScore} Computer: ${computerScore}\n\n`;
+  let scoreMessage = `${getGameText('playerName')}: ${playerScore} ${getGameText('competitorName')}: ${computerScore}\n`;
 
   if (gameWinner === 'player') {
-    result = `You won the game.\n\n`;
+    result = getGameText('playerWinsMessage');
   } else if (gameWinner === 'computer') {
-    result = `The computer won the game.\n\n`;
+    result = getGameText('computerWinsMessage');
   } else {
-    result = `It's a tie.\n\n`;
+    result = getGameText('tiedGameMessage');
   }
 
-  console.log(result + scoreMessage);
+  displayGameMessage(result);
+  displayGameMessage( getGameText('scoreMessageHeader') );
+  displayGameMessage(scoreMessage);
 }
 
 function decideGameWinner(playersChoice, computersChoice) {
@@ -45,18 +57,27 @@ function decideGameWinner(playersChoice, computersChoice) {
     computerScore += 1;
   }
 
+  numberOfRounds += 1;
   return winner;
 }
 
 // LOGIC
 while (playerScore < 5 && computerScore < 5) {
-  // Player's Selection
-  displayGameMessage("Please make a selection. Type a number:\n1) Rock 2) Paper 3) Scissors 4) Lizard 5) Spock");
+  // Display the welcome text only if the we're on the first round
+  if (numberOfRounds === 1) {
+    displayGameMessage( getGameText('welcome') );
+  }
+
+  // Display the round number
+  displayGameMessage(`\n== ${getGameText('gameRoundNumber')} ${numberOfRounds} ==`);
+
+  // Get the player's selection
+  displayGameMessage( getGameText('selectionInstructions') );
   let playerSelection = readline.question();
 
   // Test for an invalid entry by the player
   while (!['1', '2', '3', '4', '5'].includes(playerSelection)) {
-    displayGameMessage("That's not a valid selection. Please try again.");
+    displayGameMessage( getGameText('selectionError') );
     playerSelection = readline.question();
   }
 
@@ -79,13 +100,15 @@ while (playerScore < 5 && computerScore < 5) {
       playerChoice = 'spock';
       break;
   }
-  displayGameMessage(`You selected ${playerChoice}.`);
+  displayGameMessage(`${getGameText('playerSelectionMessage')} ${playerChoice}.`);
 
   // Computer Selection
   let randomIndex = Math.floor(Math.random() * VALID_CHOICES.length);
   let computerChoice = VALID_CHOICES[randomIndex];
-  displayGameMessage(`The computer selected ${computerChoice}.`);
+  displayGameMessage(`${getGameText('computerSelectionMessage')} ${computerChoice}.`);
 
   let winnerOfTheGame = decideGameWinner(playerChoice, computerChoice);
   displayGameWinner(winnerOfTheGame);
 }
+
+displayGameMessage( getGameText('goodbye') );
