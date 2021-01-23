@@ -12,6 +12,26 @@
     "playerWinsMessage": "You won the game.\n",
     "computerWinsMessage": "The computer won the game.\n",
     "tiedGameMessage": "It's a tie.\n",
-    "goodbye": "Thank you for playing. Live long, and prosper!"
+    "goodbye": "Thank you for playing. Live long, and prosper!",
+    "rock": {
+      "lizard": "Rock crushes lizard.",
+      "scissors": "Rock crushes scissors."
+    },
+    "paper": {
+      "rock": "Paper covers rock.",
+      "spock": "Paper disproves, Spock."
+    },
+    "scissors": {
+      "lizard": "Scissors decapitates lizard.",
+      "paper": "Scissors cuts paper."
+    },
+    "lizard": {
+      "paper": "Lizard eats paper.",
+      "spock": "Lizard poisons, Spock."
+    },
+    "spock": {
+      "rock": "Spock vaporizes rock.",
+      "scissors": "Spock smashes scissors."
+    }
   }
 }

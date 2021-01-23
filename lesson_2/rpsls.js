@@ -23,8 +23,22 @@ function getGameText(textToRetrieve, lang = DEFAULT_LANG) {
   return GAME_TEXT[lang][textToRetrieve];
 }
 
-function displayGameMessage(msg) {
-  console.log(`${msg}`);
+function displayGameText(text) {
+  console.log(`${text}`);
+}
+
+function getGameWinner(playersChoice, computersChoice) {
+  let gameWinner = null;
+
+  if (playersChoice === computersChoice) {
+    gameWinner = 'tie';
+  } else if ( WINNING_COMBINATIONS[playersChoice].includes(computersChoice) ) {
+    gameWinner = 'player';
+  } else {
+    gameWinner = 'computer';
+  }
+
+  return gameWinner;
 }
 
 function displayGameWinner(gameWinner) {
@@ -39,45 +53,47 @@ function displayGameWinner(gameWinner) {
     result = getGameText('tiedGameMessage');
   }
 
-  displayGameMessage(result);
-  displayGameMessage( getGameText('scoreMessageHeader') );
-  displayGameMessage(scoreMessage);
+  displayGameText(result);
+  displayGameText( getGameText('scoreMessageHeader') );
+  displayGameText(scoreMessage);
 }
 
-function decideGameWinner(playersChoice, computersChoice) {
-  let winner = null;
-
-  if (playersChoice === computersChoice) {
-    winner = 'tie';
-  } else if ( WINNING_COMBINATIONS[playersChoice].includes(computersChoice) ) {
-    winner = 'player';
+function incrementNumberOfGamesWon(gameWinner) {
+  if (gameWinner === 'player') {
     playerScore += 1;
-  } else {
-    winner = 'computer';
+  } else if (gameWinner === 'computer') {
     computerScore += 1;
   }
+}
 
-  numberOfRounds += 1;
-  return winner;
+function incrementNumberOfRoundsPlayed(num) {
+  numberOfRounds += num;
+}
+
+function capitalizeText(text) {
+  let upperCaseFirstLetter = text[0].toUpperCase();
+  let restOfTheLowercaseWord = text.slice(1);
+  return upperCaseFirstLetter + restOfTheLowercaseWord;
 }
 
 // LOGIC
 while (playerScore < 5 && computerScore < 5) {
+
   // Display the welcome text only if the we're on the first round
   if (numberOfRounds === 1) {
-    displayGameMessage( getGameText('welcome') );
+    displayGameText( getGameText('welcome') );
   }
 
   // Display the round number
-  displayGameMessage(`\n== ${getGameText('gameRoundNumber')} ${numberOfRounds} ==`);
+  displayGameText(`\n== ${getGameText('gameRoundNumber')} ${numberOfRounds} ==`);
 
   // Get the player's selection
-  displayGameMessage( getGameText('selectionInstructions') );
+  displayGameText( getGameText('selectionInstructions') );
   let playerSelection = readline.question();
 
   // Test for an invalid entry by the player
   while (!['1', '2', '3', '4', '5'].includes(playerSelection)) {
-    displayGameMessage( getGameText('selectionError') );
+    displayGameText( getGameText('selectionError') );
     playerSelection = readline.question();
   }
 
@@ -100,15 +116,27 @@ while (playerScore < 5 && computerScore < 5) {
       playerChoice = 'spock';
       break;
   }
-  displayGameMessage(`${getGameText('playerSelectionMessage')} ${playerChoice}.`);
+  displayGameText(`${getGameText('playerSelectionMessage')}: ${capitalizeText(playerChoice)}`);
 
   // Computer Selection
   let randomIndex = Math.floor(Math.random() * VALID_CHOICES.length);
   let computerChoice = VALID_CHOICES[randomIndex];
-  displayGameMessage(`${getGameText('computerSelectionMessage')} ${computerChoice}.`);
+  displayGameText(`${getGameText('computerSelectionMessage')}: ${capitalizeText(computerChoice)}`);
 
-  let winnerOfTheGame = decideGameWinner(playerChoice, computerChoice);
+  // Determine the winner of the game
+  let winnerOfTheGame = getGameWinner(playerChoice, computerChoice);
+
+  //Explain why the player won
+  if (winnerOfTheGame === 'player') {
+    displayGameText(GAME_TEXT[DEFAULT_LANG][playerChoice][computerChoice]);
+  } else if (winnerOfTheGame === 'computer') {
+    displayGameText(GAME_TEXT[DEFAULT_LANG][computerChoice][playerChoice]);
+  }
+
+  incrementNumberOfGamesWon(winnerOfTheGame);
+  incrementNumberOfRoundsPlayed(1);
+
   displayGameWinner(winnerOfTheGame);
 }
 
-displayGameMessage( getGameText('goodbye') );
+displayGameText( getGameText('goodbye') );
