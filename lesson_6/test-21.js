@@ -1,3 +1,33 @@
+/*
+** TODO: Move all game data to an object.
+** let game = {
+**   'gamesPlayed': 0,
+**   'players': {
+**     'dealer': {
+**       'currentHand': 0,
+**       'gamesWon': 0
+**     },
+**     'player1': {
+**       'currentHand': 0,
+**       'gamesWon': 0
+**     }
+**   },
+**   'deck': [] // This will be populated by newDeck()
+** }; 
+*/ 
+
+
+/*
+** 1. Initialize deck – DONE
+** 2. Deal cards to player and dealer - DONE
+** 3. Player turn: hit or stay  - DONE
+**    - repeat until bust or stay
+** 4. If player bust, dealer wins. - IN PROG
+** 5. Dealer turn: hit or stay
+**    - repeat until total >= 17
+** 6. If dealer busts, player wins.
+** 7. Compare cards and declare winner.
+*/
 
 const readline = require("readline-sync");
 const SUITS = ["Hearts", "Diamonds", "Clubs", "Spades"];
@@ -98,6 +128,7 @@ function hit(hand, deck) {
 
 
 // LOGIC
+// All of this to be moved to the game object.
 let gamesPlayed = 0;
 
 let players = {
@@ -111,12 +142,12 @@ let players = {
   }
 };
 
-// Let's create a new deck
+// Let's create a new deck.
 let deckOfCards = newDeck(SUITS, CARDS);
 
 
 
-// Now let's deal out some cards
+// Now let's deal out some cards.
 players['dealer']['currentHand'] = dealCards(deckOfCards);
 players['player1']['currentHand'] = dealCards(deckOfCards);
 
@@ -133,7 +164,7 @@ console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${ta
 
 
 
-// Step 1: Ask if Player 1 wants to hit
+// Step 1: Ask if Player 1 wants to hit?
 console.log("Would you like to hit or stay?\n(Type Hit or Stay and press Enter.)");
 let hitOrStayAnswer = readline.question().toLowerCase();
 
@@ -143,14 +174,15 @@ while ( !HIT_OR_STAY_VALID_CHOICES.includes(hitOrStayAnswer) ) {
 }
 
 
-// Step 2: Add card to the hand and tally
-// Repeat steps 1 and 2 as needed
+// Step 2: Add card to the hand and tally.
+// Repeat steps 1 and 2 as needed.
 while (hitOrStayAnswer === "hit") {
   // Add card to the hand
   hit(playerHand, deckOfCards);
   console.log(`\n\nYour hand now contains: ${playerHand}\n\n`);
   
-  // Compare the hands
+  // Compare the hands.
+  // TODO: This needs cleaning up
   if (tallyHand(playerHand) > LIMIT) {
     console.log("You busted. Dealer wins.");
     console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
@@ -164,41 +196,7 @@ while (hitOrStayAnswer === "hit") {
     //console.log(`You have a total of: ${tallyHand(playerHand)}`);
   }
 
-  // Lather rinse repeat
+  // Lather, rinse, repeat.
   console.log("Would you like to hit or stay?");
   hitOrStayAnswer = readline.question();
 }
-
-
-/*
-  TODO: Move all game data to an object.
-
-  let game = {
-    'gamesPlayed': 0,
-    'players': {
-      "dealer": {
-        "currentHand": 0,
-        "gamesWon": 0
-      },
-      player1": {
-        currentHand": 0,
-        "gamesWon": 0
-      }
-    },
-    'deck': []; // This will be populated by newDeck()
-  };
-  
-*/ 
-
-
-/*
-** 1. Initialize deck – DONE
-** 2. Deal cards to player and dealer - DONE
-** 3. Player turn: hit or stay  - DONE
-**    - repeat until bust or stay
-** 4. If player bust, dealer wins. - IN PROG
-** 5. Dealer turn: hit or stay
-**    - repeat until total >= 17
-** 6. If dealer busts, player wins.
-** 7. Compare cards and declare winner.
-*/
