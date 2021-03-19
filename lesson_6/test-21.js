@@ -1,8 +1,10 @@
+
 const readline = require("readline-sync");
 const SUITS = ["Hearts", "Diamonds", "Clubs", "Spades"];
 const CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace"];
 const LIMIT = 21;
 const HIT_OR_STAY_VALID_CHOICES = ["hit", "stay"];
+
 
 // FUNCS
 function newDeck(suitArr, cardsArr) {
@@ -94,14 +96,6 @@ function hit(hand, deck) {
 }
 
 
-function compareHands(dealerHand, playerHand) {
-  // If player has 21, end game via determineWinner();
-  // Else, give option to hit or stay via hitOrStay();;
-  console.log(`Dealer has the ${formattedCard(dealerHand[0])} and an unknown card.`);
-  console.log(`Player 1 has the ${formattedCard(playerHand[0])} and the ${formattedCard(playerHand[1])} for a total of ${tallyHand(playerHand)}.`);
-};
-
-
 
 // LOGIC
 let gamesPlayed = 0;
@@ -120,16 +114,23 @@ let players = {
 // Let's create a new deck
 let deckOfCards = newDeck(SUITS, CARDS);
 
+
+
 // Now let's deal out some cards
 players['dealer']['currentHand'] = dealCards(deckOfCards);
 players['player1']['currentHand'] = dealCards(deckOfCards);
 
-// Next, we'll make it easier to access those cards
+
+
+// Next, let's make it easier to access everyone's hands
 let dealerHand = players['dealer']['currentHand'];
 let playerHand = players['player1']['currentHand'];
 
-// Now let's see where we stand...
-compareHands(dealerHand, playerHand);
+
+
+// With all that done, let's see where we stand...
+console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
+
 
 
 // Step 1: Ask if Player 1 wants to hit
@@ -147,17 +148,20 @@ while ( !HIT_OR_STAY_VALID_CHOICES.includes(hitOrStayAnswer) ) {
 while (hitOrStayAnswer === "hit") {
   // Add card to the hand
   hit(playerHand, deckOfCards);
-  console.log(`Your hand now contains: ${playerHand}`);
+  console.log(`\n\nYour hand now contains: ${playerHand}\n\n`);
   
-  // Tally the hand
+  // Compare the hands
   if (tallyHand(playerHand) > LIMIT) {
-    console.log(`You busted.`);
+    console.log("You busted. Dealer wins.");
+    console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
     break;
   } else if (tallyHand(playerHand) === LIMIT) {
-    console.log(`You won the game`);
+    console.log("You won the game.");
+    console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
     break;
   } else {
-    console.log(`You have a total of: ${tallyHand(playerHand)}`);
+    console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
+    //console.log(`You have a total of: ${tallyHand(playerHand)}`);
   }
 
   // Lather rinse repeat
@@ -165,4 +169,36 @@ while (hitOrStayAnswer === "hit") {
   hitOrStayAnswer = readline.question();
 }
 
-console.log(`The Player 1's hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}.`);
+
+/*
+  TODO: Move all game data to an object.
+
+  let game = {
+    'gamesPlayed': 0,
+    'players': {
+      "dealer": {
+        "currentHand": 0,
+        "gamesWon": 0
+      },
+      player1": {
+        currentHand": 0,
+        "gamesWon": 0
+      }
+    },
+    'deck': []; // This will be populated by newDeck()
+  };
+  
+*/ 
+
+
+/*
+** 1. Initialize deck – DONE
+** 2. Deal cards to player and dealer - DONE
+** 3. Player turn: hit or stay  - DONE
+**    - repeat until bust or stay
+** 4. If player bust, dealer wins. - IN PROG
+** 5. Dealer turn: hit or stay
+**    - repeat until total >= 17
+** 6. If dealer busts, player wins.
+** 7. Compare cards and declare winner.
+*/
