@@ -122,7 +122,7 @@ let game = {
       'gamesWon': 0
     }
   },
-  'deck': [] // This will be populated by newDeck()
+  'deck': {} // This will be populated by newDeck()
 }; 
 
 
