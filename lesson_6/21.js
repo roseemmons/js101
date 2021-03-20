@@ -136,6 +136,9 @@ game['players']['player1']['currentHand'] = dealCards(game['deck']);
 
 
 // Next, let's make it easier to access everyone's hands
+
+// TODO: Possibly have the init function return an array that I can destructure
+// Example: let [ dealerHand, playerHand ] = initGame();
 let dealerHand = game['players']['dealer']['currentHand'];
 let playerHand = game['players']['player1']['currentHand'];
 
