@@ -106,48 +106,49 @@ function hit(hand, deck) {
   return hand;
 }
 
+function initGame(suitsArray, cardsArray) {
+  // Let's set up the game object
+  let game = {
+    'gamesPlayed': 0,
+    'players': {
+      'dealer': {
+        'currentHand': 0,
+        'gamesWon': 0
+      },
+      'player1': {
+        'currentHand': 0,
+        'gamesWon': 0
+      }
+    },
+    'deck': {}
+  }; 
+  
+  // Now let's create a new deck and add it to the game's deck property
+  game['deck'] = newDeck(suitsArray, cardsArray);
+  
+  // Finally, we deal cards out to the players
+  game['players']['dealer']['currentHand'] = dealCards(game['deck']);
+  game['players']['player1']['currentHand'] = dealCards(game['deck']);
+  
+  return game;
+}
 
 
 // LOGIC
-// All of this to be moved to an init function.
-let game = {
-  'gamesPlayed': 0,
-  'players': {
-    'dealer': {
-      'currentHand': 0,
-      'gamesWon': 0
-    },
-    'player1': {
-      'currentHand': 0,
-      'gamesWon': 0
-    }
-  },
-  'deck': {} // This will be populated by newDeck()
-}; 
+// 1. Create the game object, new deck, and deal cards to the playes:
+let game = initGame(SUITS, CARDS);
 
-
-// Let's create a new deck.
-game['deck'] = newDeck(SUITS, CARDS);
-
-
-// Now let's deal out some cards.
-game['players']['dealer']['currentHand'] = dealCards(game['deck']);
-game['players']['player1']['currentHand'] = dealCards(game['deck']);
-
-
-// Next, let's make it easier to access everyone's hands
-
-// TODO: Possibly have the init function return an array that I can destructure
-// Example: let [ dealerHand, playerHand ] = initGame();
+// 2. Let's make it easier to access everyone's hands with some variables:
 let dealerHand = game['players']['dealer']['currentHand'];
 let playerHand = game['players']['player1']['currentHand'];
 
 
-// With all that done, let's see where we stand...
+// 3. With all that done, let's see where we stand...
+// TODO: Move the scores message to a function.
 console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
 
 
-// Step 1: Ask if Player 1 wants to hit?
+// 4. Ask if Player 1 wants to hit?
 console.log("Would you like to hit or stay?\n(Type Hit or Stay and press Enter.)");
 let hitOrStayAnswer = readline.question().toLowerCase();
 
@@ -157,8 +158,8 @@ while ( !HIT_OR_STAY_VALID_CHOICES.includes(hitOrStayAnswer) ) {
 }
 
 
-// Step 2: Add card to the hand and tally.
-// Repeat steps 1 and 2 as needed.
+// 5. Add card to the hand and tally.
+// Repeat steps 4 and 5 as needed.
 while (hitOrStayAnswer === "hit") {
   // Add card to the hand
   hit(playerHand, game['deck']);
