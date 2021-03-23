@@ -3,8 +3,8 @@
 ** 2. Deal cards to player and dealer - DONE
 ** 3. Player turn: hit or stay  - DONE
 **    - repeat until bust or stay
-** 4. If player bust, dealer wins. - IN PROG
-** 5. Dealer turn: hit or stay
+** 4. If player bust, dealer wins. - DONE
+** 5. Dealer turn: hit or stay - IN PROG
 **    - repeat until total >= 17
 ** 6. If dealer busts, player wins.
 ** 7. Compare cards and declare winner.
@@ -16,9 +16,8 @@ const CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace"];
 const LIMIT = 21;
 const HIT_OR_STAY_VALID_CHOICES = ["hit", "stay"];
 
-
 // FUNCS
-// TODO: Update all function calls to ES6 format.
+// TODO: Update all function calls to one format.
 function newDeck(suitArr, cardsArr) {
   let result = {};
 
@@ -65,7 +64,7 @@ function dealCards(deck) {
   let result = [];
 
   for (i = 0; i < 2; i += 1) {
-    result.push(pickACard(deck));
+    result.push( pickACard(deck) );
   }
 
   return result;
@@ -81,10 +80,10 @@ function tallyHand(hand) {
     let cardValue = 0;
     let cardFace = card[1];
 
-    if (cardFace === 'Ace') {
+    if ( cardFace === 'Ace' ) {
       numberOfAcesInHand += 1;
       cardValue = 11;
-    } else if (cardFace === 'Jack' || cardFace === 'Queen' || cardFace === 'King') {
+    } else if ( cardFace === 'Jack' || cardFace === 'Queen' || cardFace === 'King' ) {
       cardValue = 10;
     } else {
       cardValue = cardFace;
@@ -103,102 +102,129 @@ function tallyHand(hand) {
 }
 
 function hit(hand, deck) {
-  hand.push(pickACard(deck));
+  hand.push( pickACard(deck) );
   return hand;
 }
 
-function initGame(suitsArray, cardsArray) {
+function initGame(playerNames) {
   // Let's set up the game object
   let game = {
+    'activeGame': true,
     'gamesPlayed': 0,
-    'players': {
-      'dealer': {
-        'currentHand': 0,
-        'gamesWon': 0
-      },
-      'player1': {
-        'currentHand': 0,
-        'gamesWon': 0
-      }
-    },
+    'players': {},
     'deck': {}
-  }; 
-  
-  // Now let's create a new deck and add it to the game's deck property
-  game['deck'] = newDeck(suitsArray, cardsArray);
-  
-  // Finally, we deal cards out to the players
-  game['players']['dealer']['currentHand'] = dealCards(game['deck']);
-  game['players']['player1']['currentHand'] = dealCards(game['deck']);
-  
+  };
+
+  playerNames.forEach(function(playerName) {
+    game['players'][playerName] = {
+      'currentHand': 0,
+      'handValue': 0,
+      'busted': false,
+      'gamesWon': 0
+    };
+  }); 
+
   return game;
 }
 
 
 // LOGIC
-// 1. Create the game object, new deck, and deal cards to the playes:
-let game = initGame(SUITS, CARDS);
-
-// 2. Let's make it easier to access game data with some variables:
-let dealerHand = game['players']['dealer']['currentHand'];
-let playerHand = game['players']['player1']['currentHand'];
-let arrOfPlayers = Object.keys(game['players']);
-let ammountOfPlayers = Object.keys(game['players']).length;
+// 1. Create the game object
+let game = initGame( ['dealer', 'player1'] );
 
 
-// 3. Check if there's a player with 21.
-// If yes, end the game and update the hands won plus games played variables
-if ( dealerHand === 21 ) {
-  console.log(`Dealer got Black Jack with a hand of ${dealerHand}`);
-  game['players']['dealer']['gamesWon'] += 1;
-} else if ( playerHand === 21 ) {
-  console.log(`Player 1 got Black Jack with a hand of ${playerHand}`);
-  game['players']['player1']['gamesWon'] += 1;
-} else {
-  // 3a. With all that done, let's see where we stand...
-  // TODO: Move the scores message to a function.
-  console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
-
-
-  // 3b. Ask if Player 1 wants to hit?
-  console.log("Would you like to hit or stay?\n(Type Hit or Stay and press Enter.)");
-  let hitOrStayAnswer = readline.question().toLowerCase();
+while ( game['activeGame'] ) {
+  // 2. Create a new deck to pull from and update the number of games played
+  game['deck'] = newDeck(SUITS, CARDS);
+  game['gamesPlayed'] += 1;
   
-  // Verify the answer isn't gibberish
-  while ( !HIT_OR_STAY_VALID_CHOICES.includes(hitOrStayAnswer) ) {
-    console.log("That is not a valid answer.\nType Hit or Stay and press Enter.");
-    hitOrStayAnswer = readline.question();
-  }
-  
-  // Add card to the hand and tally.
-  while (hitOrStayAnswer === "hit") {
-    // Add card to the hand
-    hit(playerHand, game['deck']);
-    
-    // Compare the hands.
-    // TODO: This needs cleaning up
-    if (tallyHand(playerHand) > LIMIT) {
-      console.log("You busted. Dealer wins.");
-      console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
-      break;
-    } else if (tallyHand(playerHand) === LIMIT) {
-      console.log("You won the game.");
-      console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
-      break;
-    } else {
-      console.log(`Scores:\n Dealer hand contained: ${dealerHand} for a value of: ${tallyHand(dealerHand)}.\n Your hand contained: ${playerHand} for a value of: ${tallyHand(playerHand)}\n\n`);
+
+  // 3. Create arrays for players and winners to use later
+  let playerNames = Object.keys( game['players'] ); // Example: ['dealer', 'player1']
+  let winners = [];
+
+
+  // 4. Create welcome messages
+  console.log(`*** Welcome to Command Line Black Jack! ***`);
+  console.log(`Good luck to all our players: ${playerNames}\n`);
+  console.log(`Round ${game['gamesPlayed']}`);
+
+
+  // 5. Deal cards to all the players and tally up the hands
+  //    If someone has Black Jack, add it to the winners array.
+  playerNames.forEach(function(playerName) {
+    game['players'][playerName]['currentHand'] = dealCards(game['deck']);
+    game['players'][playerName]['handValue'] = tallyHand( game['players'][playerName]['currentHand'] );
+
+    if ( game['players'][playerName]['handValue'] === LIMIT ) {
+      game['players'][playerName]['gamesWon'] += 1;
+      winners.push(playerName);
     }
-  
-    // Lather, rinse, repeat.
-    console.log("Would you like to hit or stay?");
-    hitOrStayAnswer = readline.question();
-  }
-} // End else branch
+
+    console.log(`${playerName}'s hand contained ${game['players'][playerName]['currentHand']} for a value of ${game['players'][playerName]['handValue']}.`);
+  });
 
 
+  // 6. If a player has Black Jack, print a message to the console.
+  //    Otherwise, ask each player to either hit or stay.
+  if (winners.length > 0) {
+    let msg = "Black Jack! Congratulations to: ";
+    winners.forEach(function(winner){
+      msg += winner;
+    });
+    console.log(msg); 
+  } else {
+      // Let each player either hit or stay
+      playerNames.forEach(function(playerName) {
+        if (playerName !== "dealer") {
+          let playerData = game['players'][playerName];
 
+          console.log("\n== Would you like to hit or stay? ==");
+          console.log("Type Hit or Stay and press Enter.");
+          let hitOrStayAnswer = readline.question().toLowerCase();
 
+          // Test for gibberish
+          while ( !HIT_OR_STAY_VALID_CHOICES.includes(hitOrStayAnswer) ) {
+            console.log("That is not a valid answer.");
+            console.log("Type Hit or Stay and press Enter.");
+            hitOrStayAnswer = readline.question();
+          }
 
+          while (hitOrStayAnswer === "hit") {
+            // Add card to the hand
+            hit(playerData['currentHand'], game['deck']);
 
+            // Tally the hand's value
+            playerData['handValue'] = tallyHand(playerData['currentHand']);
 
+            // Print a status message to the console.
+            console.log(`Your hand now contains: ${playerData['currentHand']} for a value of ${playerData['handValue']}.`);
+            
+            // Review the hand
+            if ( playerData['handValue'] < LIMIT && playerData['handValue'] !== LIMIT ) {
+              console.log("Would you like to hit or stay?");
+              hitOrStayAnswer = readline.question();
+            } else if ( playerData['handValue'] === LIMIT ) {
+                hitOrStayAnswer = null;
+                console.log(`You won the game`);
+                playerData['gamesWon'] += 1;
+            } else {
+                hitOrStayAnswer = null;
+                console.log(`You busted.`);
+            }
+          } // End while hitOrStayAnswer === hit
+        } // End if !== dealer
+      }); // End forEach loop
 
+      // TODO: If handValue is < 17, auto hit
+      // TODO: Compare dealer and player hands
+
+      console.log("Would you like to play another round?");
+      console.log("Type Yes or No and press Enter.");
+      let playAnotherRoundAnswer= readline.question().toLowerCase();
+
+      if ( playAnotherRoundAnswer === 'no' ) {
+        game['activeGame'] = false;
+      }
+  } // End else
+} // End while activeGame is true
