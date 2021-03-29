@@ -46,7 +46,7 @@ function pickACard(deck) {
   result.push(randomSuit);
   result.push(randomCard);
   removeCardFromDeck(randomSuit, randomCardIndex, deck);
-  
+
   return result;
 }
 
@@ -54,7 +54,7 @@ function pickACard(deck) {
 function dealCards(deck) {
   let result = [];
 
-  for (i = 0; i < 2; i += 1) {
+  for (let i = 0; i < 2; i += 1) {
     result.push( pickACard(deck) );
   }
 
@@ -63,7 +63,8 @@ function dealCards(deck) {
 
 
 function tallyHand(hand) {
-  // Example: hand = [ ['Spade', 'Ace'], ['Club', 2 ] ['Heart', 'Ace'], ['Diamond', 10 ] ]
+  // Example: hand:
+  // [ ['Spade', 'Ace'], ['Club', 2 ] ['Heart', 'Ace'], ['Diamond', 10 ] ]
   // Could be 34 or 14
   let numberOfAcesInHand = 0;
 
@@ -114,9 +115,9 @@ function checkFor21(players) {
 }
 
 function determineWinner(playersWhoHaveNotBusted) {
-    let maxCallback = ( max, cur ) => Math.max( max, cur );
-    let highestScore = playersWhoHaveNotBusted.map( player => player[1]['handValue'] ).reduce( maxCallback, -Infinity ); // returns a Number
-    return playersWhoHaveNotBusted.filter( player => player[1]['handValue'] === highestScore );
+  let maxCallback = ( max, cur ) => Math.max( max, cur );
+  let highestScore = playersWhoHaveNotBusted.map( player => player[1]['handValue'] ).reduce( maxCallback, -Infinity ); // returns a Number
+  return playersWhoHaveNotBusted.filter( player => player[1]['handValue'] === highestScore );
 }
 
 
@@ -135,7 +136,7 @@ function initGame(playerNames) {
       'handValue': 0,
       'gamesWon': 0
     };
-  }); 
+  });
 
   return game;
 }
@@ -151,7 +152,7 @@ while ( game['activeGame'] ) {
   // 2. Create a new deck to pull from and update the number of games played
   game['deck'] = newDeck(SUITS, CARDS);
   game['gamesPlayed'] += 1;
-  
+
 
   // 3. Create an array for the player names
   let playerNames = Object.keys( game['players'] ); // Example: ['dealer', 'player1']
@@ -161,7 +162,6 @@ while ( game['activeGame'] ) {
   console.log(`\n\n\n=== Round ${game['gamesPlayed']} ===`);
   console.log("Good luck to all our players:");
   playerNames.forEach( player => console.log(`- ${player}`) );
-
 
 
   // 5. Deal cards to all the players and tally up the hands
@@ -237,7 +237,7 @@ while ( game['activeGame'] ) {
     //    Otherwise, the Dealer must auto hit if handValue is less than 17
     //    Dealer will stay if the hand value is 17 or more
     let didAllPlayersBust = Object.entries(game['players']).filter(player => player[0] !== "Dealer").every(player => player[1]['busted'] === true);
-    
+
     if ( didAllPlayersBust ) {
       console.log("\n\nAll players have busted. Dealer wins!");
       game['players']['Dealer']['gamesWon'] += 1;
@@ -271,18 +271,18 @@ while ( game['activeGame'] ) {
       let playersWhoHaveNotBusted = Object.entries(game['players']).filter(player => player[1]['busted'] === false);
 
       if ( playersWhoHaveNotBusted.length === 1 ) {
-        console.log(`\n\nCongratulations to ${playersWhoHaveNotBusted[0][0]} for winning this round!`);  
+        console.log(`\n\nCongratulations to ${playersWhoHaveNotBusted[0][0]} for winning this round!`);
         game['players'][playersWhoHaveNotBusted[0][0]]['gamesWon'] += 1;
       } else {
         let winners = determineWinner(playersWhoHaveNotBusted);
 
         console.log("\n\nCongratulations to our winners:");
-        winners.map( winner => {
+        winners.forEach( winner => {
           console.log(`- ${winner[0]}`);
           game['players'][winner[0]]['gamesWon'] += 1;
         });
       }
-    }    
+    } 
   }
 
 
@@ -291,7 +291,7 @@ while ( game['activeGame'] ) {
 
   console.log("\nWould you like to play another round?");
   console.log("Type Yes or No and press Enter.");
-  let playAnotherRoundAnswer= readline.question().toLowerCase();
+  let playAnotherRoundAnswer = readline.question().toLowerCase();
 
   if ( playAnotherRoundAnswer === 'no' ) {
     game['activeGame'] = false;
